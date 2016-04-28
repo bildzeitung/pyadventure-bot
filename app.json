@@ -1,0 +1,8 @@
+{
+  "name": "Python Bot Playing Adventureland on Heroku",
+  "description": "A simple bot playing Scott Adams' Adventureland.",
+  "image": "heroku/python",
+  "repository": "https://github.com/bildzeitung/pyadventure-bot",
+  "keywords": ["python", "facebook" ],
+  "addons": []
+}
