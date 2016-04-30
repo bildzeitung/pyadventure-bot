@@ -63,3 +63,4 @@ target/
 
 # DMK
 venv
+.env
