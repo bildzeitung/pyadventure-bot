@@ -10,8 +10,6 @@ is sent back as a response.
 
 from flask import Flask, request
 from pymessenger.bot import Bot
-from subprocess import check_output
-from tempfile import NamedTemporaryFile
 
 import os
 
@@ -20,13 +18,7 @@ bot = Bot(os.environ['token'])
 
 
 def get_message(msg):
-    tmp = NamedTemporaryFile(suffix='.js', delete=False)
-    tmp.write('console.log(eval("%s"))' % msg)
-    tmp.close()
-    print 'Running with file %s' % tmp.name
-    outmsg = check_output(['node', tmp.name])
-    print 'Got back: %s' % outmsg
-    return outmsg
+    return msg
 
 
 @app.route("/webhook", methods=['GET', 'POST'])
@@ -41,9 +33,8 @@ def hello():
             if (x.get('message') and x['message'].get('text')):
                 message = x['message']['text']
                 recipient_id = x['sender']['id']
-                print 'RID: %s MSG: %s' % (recipient_id, message)
                 message = get_message(message)
-                print bot.send_text_message(recipient_id, message)
+                bot.send_text_message(recipient_id, message)
             else:
                 pass
         return "success"
