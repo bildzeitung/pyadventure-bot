@@ -64,3 +64,4 @@ target/
 # DMK
 venv
 .env
+version.txt
