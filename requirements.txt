@@ -1,3 +1,4 @@
+-e scottadams
 flask
 git+https://github.com/bildzeitung/pymessenger.git
 flake8
