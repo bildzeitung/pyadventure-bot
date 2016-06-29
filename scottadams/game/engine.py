@@ -19,4 +19,13 @@ class Engine(object):
         # TODO: sort out lighting situation
 
         room = self.state.current_location
-        return room['desc']
+
+        # TODO: sort out * in text
+
+        msg = "I'm in a %s" % room['desc']
+
+        # TODO: add exits
+
+        # TODO: add items
+
+        return msg
