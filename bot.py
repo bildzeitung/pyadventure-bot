@@ -17,7 +17,7 @@ import os
 
 app = Flask(__name__)
 bot = Bot(os.environ['token'])
-server = Server(os.environ['datafile'])
+gameserver = Server(os.environ['datafile'])
 
 
 @app.route("/webhook", methods=['GET', 'POST'])
@@ -34,8 +34,10 @@ def server():
                 command = x['message']['text']
                 recipient_id = x['sender']['id']
 
-                message = server.play(recipient_id, command)
+                message = gameserver.play(recipient_id, command)
                 bot.send_text_message(recipient_id, message)
+
+                return message
             else:
                 pass
 
