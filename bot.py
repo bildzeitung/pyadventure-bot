@@ -17,7 +17,8 @@ import os
 
 app = Flask(__name__)
 bot = Bot(os.environ['token'])
-gameserver = Server(os.environ['datafile'])
+gameserver = Server(os.path.join(os.dirname(os.abspath(__file__)),
+                                 'scottadams', 'assets', os.environ['datafile']))
 
 
 @app.route("/webhook", methods=['GET', 'POST'])
