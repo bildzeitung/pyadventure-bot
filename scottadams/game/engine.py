@@ -13,8 +13,7 @@ class Engine(object):
     def process(self, state, line):
         new_state = state.clone()
 
-        if line is None:
-            new_state.last_message = self.look(state)
+        new_state.last_message = self.look(state)
 
         return new_state
 
