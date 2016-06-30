@@ -7,18 +7,21 @@
 
 
 class Engine(object):
-    def __init__(self, data, state):
+    def __init__(self, data):
         self.data = data
-        self.state = state
 
-    def process(self, line):
+    def process(self, state, line):
+        new_state = state.clone()
+
         if line is None:
-            return self.look()
+            new_state.last_message = self.look(state)
 
-    def look(self):
+        return new_state
+
+    def look(self, state):
         # TODO: sort out lighting situation
 
-        room = self.state.current_location
+        room = state.current_location
 
         # TODO: sort out * in text
 

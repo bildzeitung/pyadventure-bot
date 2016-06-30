@@ -9,10 +9,25 @@
 class State(object):
     def __init__(self):
         self._current_location = None
+        self._last_message = ''
 
     @property
     def current_location(self):
         return self._current_location
+
+    @property
+    def last_message(self):
+        return self._last_message
+
+    @last_message.setter
+    def last_message(self, message):
+        self._last_message = message
+
+    def clone(self):
+        new_state = State()
+        new_state._current_location = self._current_location
+
+        return new_state
 
 
 class StateFromGameData(State):

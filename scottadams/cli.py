@@ -27,9 +27,10 @@ class REPL(cmd.Cmd):
     '''
     prompt = '> '
 
-    def __init__(self, engine):
+    def __init__(self, engine, state):
         cmd.Cmd.__init__(self)
         self.engine = engine
+        self.state = state
 
     def do_EOF(self, line):
         ''' Simply exit on EOF
@@ -37,7 +38,8 @@ class REPL(cmd.Cmd):
         return True
 
     def default(self, line):
-        click.echo(self.engine.process(line))
+        self.state = self.engine.process(self.state, line)
+        click.echo(self.state.last_message)
 
 
 @click.command()
@@ -49,9 +51,10 @@ def main(datafile):
     '''
     data = Data(datafile)
     state = StateFromGameData(data)
-    engine = Engine(data, state)
+    engine = Engine(data)
 
-    click.echo(engine.process(None))
+    state = engine.process(state, None)
+    click.echo(state.last_message)
 
-    repl = REPL(engine)
+    repl = REPL(engine, state)
     repl.cmdloop()
