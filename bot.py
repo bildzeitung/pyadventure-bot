@@ -17,7 +17,7 @@ import os
 
 app = Flask(__name__)
 bot = Bot(os.environ['token'])
-gameserver = Server(os.path.join(os.dirname(os.abspath(__file__)),
+gameserver = Server(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                  'scottadams', 'assets', os.environ['datafile']))
 
 
