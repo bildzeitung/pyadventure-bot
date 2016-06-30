@@ -6,18 +6,20 @@
 '''
 from game.data import Data
 from game.engine import Engine
-from game.state import StateFromDatabase
+from game.state import StateFromGameData
 
 
 class Server(object):
     def __init__(self, datafile):
-        self.data = Data(datafile)
+        with open(datafile, 'rb') as src:
+            self.data = Data(src)
+
+        self.engine = Engine(self.data)
 
     def play(self, player, command):
-        state = StateFromDatabase(player)
-        engine = Engine(self.data, state)
+        state = StateFromGameData(self.data)
 
-        new_state = engine.process()
+        new_state = self.engine.process(state, command)
         new_state.save()
 
         return new_state.last_message
