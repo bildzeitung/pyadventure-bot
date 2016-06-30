@@ -29,6 +29,9 @@ class State(object):
 
         return new_state
 
+    def save(self):
+        pass
+
 
 class StateFromGameData(State):
     ''' Initial game state
@@ -42,4 +45,4 @@ class StateFromDatabase(State):
     ''' Game state from DB
     '''
     def __init__(self, data):
-        super(StateFromGameData, self).__init__()
+        super(StateFromDatabase, self).__init__()
