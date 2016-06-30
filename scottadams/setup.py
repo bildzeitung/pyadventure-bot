@@ -25,4 +25,8 @@ setup(
     entry_points={
         'console_scripts': ['adventure=cli:main'],
     },
+    include_package_data=True,
+    package_data={
+        'game_binaries': ['assets/*.dat'],
+    },
 )
