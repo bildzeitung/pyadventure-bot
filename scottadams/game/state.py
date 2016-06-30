@@ -21,3 +21,10 @@ class StateFromGameData(State):
     def __init__(self, data):
         super(StateFromGameData, self).__init__()
         self._current_location = data.starting_room
+
+
+class StateFromDatabase(State):
+    ''' Game state from DB
+    '''
+    def __init__(self, data):
+        super(StateFromGameData, self).__init__()
