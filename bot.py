@@ -42,6 +42,8 @@ def server():
             else:
                 pass
 
+    app.logger.info('Unknown request: %s', request.json)
+
     return 'ok'
 
 if __name__ == "__main__":
