@@ -5,19 +5,38 @@
 
 '''
 
+from conditions import conditions
+
 
 class Engine(object):
     def __init__(self, data):
         self.data = data
 
+    def redraw(self, state):
+        if state.redraw:
+            state.last_message = self.look(state)
+            state.redraw = False
+
     def process(self, state, line):
+        ''' Process one game loop, returning a new state
+        '''
         new_state = state.clone()
 
-        new_state.last_message = self.look(state)
+        self.redraw(new_state)
+
+        self.perform_actions(new_state, 0, 0)  # main loop
+
+        self.redraw(new_state)
+
+        # TODO: parse input
+        # TODO: process action
+        # TODO: deal with lights
 
         return new_state
 
     def look(self, state):
+        ''' Display room description
+        '''
         # TODO: sort out lighting situation
 
         room = state.current_location
@@ -31,3 +50,28 @@ class Engine(object):
         # TODO: add items
 
         return msg
+
+    def perform_actions(self, state, verb, noun):
+        ''' Main game logic
+        '''
+        # TODO: some validation on verb / noun pairs
+
+        # TODO: basic move
+        for action in self.data.actions_by_verb(verb):
+            # TODO: sort out random percent (always 100% right now)
+            if (action.verb == 0) or (action.verb != 0 and
+                                      (action.noun == noun or action.noun == 0)):
+                result = self.perform_line(state, action)
+
+    def perform_line(self, state, action):
+        # TODO: sort out conditionals
+        params = []
+        for condition in action.conditions:
+            print condition
+            if not conditions[condition['type']](condition['value'], state, params):
+                return 0
+
+        # TODO: perform actions if conditionals pass
+        print 'ACTION'
+        for act in action.actions:
+            pass

@@ -5,15 +5,19 @@
 
 '''
 
+from collections import defaultdict
+
+from data import Item
+
 
 class State(object):
     def __init__(self):
-        self._current_location = None
         self._last_message = ''
 
-    @property
-    def current_location(self):
-        return self._current_location
+        self.current_location = None
+        self.redraw = False
+        self.items = None
+        self.bitflags = defaultdict(int)
 
     @property
     def last_message(self):
@@ -27,6 +31,14 @@ class State(object):
         new_state = State()
         new_state._current_location = self._current_location
 
+        new_state.items = []
+        for item in self.items:
+            new_state.items.append(Item(item.desc, item.location))
+
+        new_state.bitflags = defaultdict(int)
+        for key, val in self.bitflags.iteritems():
+            new_state[key] = val
+
         return new_state
 
     def save(self):
@@ -39,6 +51,7 @@ class StateFromGameData(State):
     def __init__(self, data):
         super(StateFromGameData, self).__init__()
         self._current_location = data.starting_room
+        self.items = data.items
 
 
 class StateFromDatabase(State):
