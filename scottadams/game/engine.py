@@ -5,8 +5,12 @@
 
 '''
 
+import logging
+
 from actions import actions
 from conditions import conditions
+
+LOG = logging.getLogger('scottadams')
 
 
 class Engine(object):
@@ -66,9 +70,10 @@ class Engine(object):
 
     def perform_line(self, state, action):
         # TODO: sort out conditionals
+        LOG.debug('[perform line]')
+
         params = []
         for condition in action.conditions:
-            # print condition
             if not conditions[condition['type']](condition['value'], state, params):
                 return 0
 
@@ -76,9 +81,11 @@ class Engine(object):
         for act in action.actions:
             # process messages
             if act > 0 and act < 52:
+                LOG.debug('[action] [message] %s', act)
                 state.last_message += self.data.messages[act]
                 continue
             if act > 101:
+                LOG.debug('[action] [message (>101)] %s', act)
                 act -= 50  # adjustment
                 state.last_message += self.data.messages[act]
                 continue

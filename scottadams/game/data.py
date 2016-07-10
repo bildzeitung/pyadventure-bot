@@ -28,6 +28,9 @@ class ActionGlob(object):
         self.noun = self.vocab % 150
         self.verb = self.vocab / 150
 
+    def __str__(self):
+        return '%s %s' % (self.conditions, self.actions)
+
 
 class Item(object):
     ''' Internal representation of an item
@@ -128,7 +131,7 @@ class Data(object):
 
     @property
     def starting_room(self):
-        return self.rooms[self.headers['starting_room']]
+        return self.headers['starting_room']
 
     def _load_items(self):
         regex = r'"([^"]*)" (\d+)'

@@ -5,8 +5,13 @@
 
 '''
 
+import logging
+
+LOG = logging.getLogger('scottadams')
+
 
 def set_bitflag(state, params):
+    LOG.debug('[action] [set_bitflag] %s', params[0])
     state.bitflags[params[0]] = True
     params.pop(0)
 

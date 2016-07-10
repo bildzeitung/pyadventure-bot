@@ -17,7 +17,7 @@ class State(object):
         self.current_location = None
         self.redraw = False
         self.items = None
-        self.bitflags = defaultdict(int)
+        self.bitflags = defaultdict(bool)
 
     @property
     def last_message(self):
@@ -29,13 +29,13 @@ class State(object):
 
     def clone(self):
         new_state = State()
-        new_state._current_location = self._current_location
+        new_state.current_location = self.current_location
 
         new_state.items = []
         for item in self.items:
             new_state.items.append(Item(item.desc, item.location))
 
-        new_state.bitflags = defaultdict(int)
+        new_state.bitflags = defaultdict(bool)
         for key, val in self.bitflags.iteritems():
             new_state[key] = val
 
@@ -50,7 +50,7 @@ class StateFromGameData(State):
     '''
     def __init__(self, data):
         super(StateFromGameData, self).__init__()
-        self._current_location = data.starting_room
+        self.current_location = data.starting_room
         self.items = data.items
 
 
