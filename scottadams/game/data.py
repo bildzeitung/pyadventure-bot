@@ -22,7 +22,8 @@ class ActionGlob(object):
     def __init__(self, data):
         self.vocab = data[0]
         self.conditions = [{'type': x % 20, 'value': x / 20} for x in data[1:5]]
-        self.actions = data[6:2]
+        self.actions = [data[6] / 150, data[6] % 150,
+                        data[7] / 150, data[7] % 150]
 
         self.noun = self.vocab % 150
         self.verb = self.vocab / 150

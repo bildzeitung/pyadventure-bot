@@ -5,6 +5,7 @@
 
 '''
 
+from actions import actions
 from conditions import conditions
 
 
@@ -67,11 +68,20 @@ class Engine(object):
         # TODO: sort out conditionals
         params = []
         for condition in action.conditions:
-            print condition
+            # print condition
             if not conditions[condition['type']](condition['value'], state, params):
                 return 0
 
         # TODO: perform actions if conditionals pass
-        print 'ACTION'
         for act in action.actions:
-            pass
+            # process messages
+            if act > 0 and act < 52:
+                state.last_message += self.data.messages[act]
+                continue
+            if act > 101:
+                act -= 50  # adjustment
+                state.last_message += self.data.messages[act]
+                continue
+
+            # TODO: process regular actions
+            actions[act](state, params)
