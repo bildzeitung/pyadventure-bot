@@ -31,6 +31,9 @@ def server():
         output = request.json
         event = output['entry'][0]['messaging']
         for x in event:
+            if x.get('message') and x['message'].get('is_echo'):
+                    return 'ok'
+
             if (x.get('message') and x['message'].get('text')):
                 command = x['message']['text']
                 recipient_id = x['sender']['id']
