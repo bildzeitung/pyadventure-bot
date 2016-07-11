@@ -12,7 +12,7 @@ from data import Item
 
 class State(object):
     def __init__(self):
-        self._last_message = ''
+        self._last_message = []
 
         self.current_location = None
         self.redraw = False
@@ -21,11 +21,11 @@ class State(object):
 
     @property
     def last_message(self):
-        return self._last_message
+        return '\n'.join(self._last_message)
 
     @last_message.setter
     def last_message(self, message):
-        self._last_message = message
+        self._last_message.append(message)
 
     def clone(self):
         new_state = State()

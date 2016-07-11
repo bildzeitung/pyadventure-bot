@@ -7,3 +7,5 @@
 
 
 CARRIED = -1
+
+EXITNAMES = ["North", "South", "East", "West", "Up", "Down"]
