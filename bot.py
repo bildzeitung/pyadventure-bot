@@ -38,6 +38,8 @@ def server():
                 message = gameserver.play(recipient_id, command)
                 bot.send_text_message(recipient_id, message)
 
+                app.logger.info('Handled request: %s', request.json)
+
                 return message
             else:
                 pass
