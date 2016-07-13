@@ -6,6 +6,7 @@
 '''
 
 from collections import defaultdict
+from copy import copy
 
 from data import Item
 
@@ -35,9 +36,7 @@ class State(object):
         for item in self.items:
             new_state.items.append(Item(item.desc, item.location))
 
-        new_state.bitflags = defaultdict(bool)
-        for key, val in self.bitflags.iteritems():
-            new_state[key] = val
+        new_state.bitflags = copy(self.bitflags)
 
         return new_state
 
