@@ -14,11 +14,24 @@ from pymessenger.bot import Bot
 from server import Server
 
 import os
+import psycopg2
+import urlparse
 
 app = Flask(__name__)
 bot = Bot(os.environ['token'])
 gameserver = Server(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                  'scottadams', 'assets', os.environ['datafile']))
+
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
+
+conn = psycopg2.connect(
+        database=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port
+        )
 
 
 @app.route("/webhook", methods=['GET', 'POST'])
