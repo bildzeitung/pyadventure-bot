@@ -53,7 +53,7 @@ def main(datafile):
     state = StateFromGameData(data)
     engine = Engine(data)
 
-    state = engine.process(state, None)
+    state = engine.start_game(state)
     click.echo(state.last_message)
 
     repl = REPL(engine, state)
