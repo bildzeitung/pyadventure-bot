@@ -24,6 +24,7 @@ class Engine(object):
         new_state = state.clone()
 
         self.perform_actions(new_state, 0, 0)  # main loop
+        new_state.last_message = ''
         self.look(new_state)
 
         return new_state
