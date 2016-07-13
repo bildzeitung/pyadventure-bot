@@ -10,6 +10,10 @@ PG_PORT = 5432
 PG_SOCKET = ${PG_RUN}/.s.PGSQL.${PG_PORT}
 PG_PARM = -D ${PG_DATA} -l ${PG_LOG}/pg.log -o "-F -c unix_socket_directories=${PG_RUN} -p ${PG_PORT}"
 
+DB_NAME = development
+DB_USER = dev
+DB_PWD = test
+
 ${PG_DATA}/postgresql.conf:
 	mkdir -p ${PG_DATA}
 	${PG_PATH}/initdb -D ${PG_DATA} -E UNICODE
@@ -20,7 +24,8 @@ ${PG_SOCKET}:
 	${PG_PATH}/pg_ctl $(PG_PARM) start -w
 
 ${PG_DATA}/init:
-	${PG_PATH}/createdb -E UTF8 development -h ${PG_RUN}
+	${PG_PATH}/psql -h ${PG_RUN} -d postgres -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PWD}';"
+	${PG_PATH}/createdb -E UTF8 ${DB_NAME} -h ${PG_RUN} -O ${DB_USER}
 	echo 1 > ${PG_DATA}/init
 
 db_start: ${PG_DATA}/postgresql.conf ${PG_SOCKET} ${PG_DATA}/init
@@ -32,7 +37,7 @@ db_status:
 	${PG_PATH}/pg_ctl $(PG_PARM) status
 
 db_dev: ${PG_SOCKET}
-	psql -h ${PG_RUN}/ -d development
+	psql -d postgres://${DB_USER}:${DB_PWD}@localhost:${PG_PORT}/${DB_NAME}
 
 db_clean: db_stop
 	rm -fr ${PG_DIR}
