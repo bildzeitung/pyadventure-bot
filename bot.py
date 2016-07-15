@@ -8,30 +8,22 @@ is sent back as a response.
 
 """
 
-from flask import Flask, request
-from pymessenger.bot import Bot
-
 from server import Server
 
+from flask import Flask, request
+from flask_sqlalchemy import SQLAlchemy
+from pymessenger.bot import Bot
+
 import os
-import psycopg2
-import urlparse
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
 bot = Bot(os.environ['token'])
 gameserver = Server(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                 'scottadams', 'assets', os.environ['datafile']))
-
-urlparse.uses_netloc.append("postgres")
-url = urlparse.urlparse(os.environ["DATABASE_URL"])
-
-conn = psycopg2.connect(
-        database=url.path[1:],
-        user=url.username,
-        password=url.password,
-        host=url.hostname,
-        port=url.port
-        )
+                                 'scottadams', 'assets', os.environ['datafile']), db, app.logger)
 
 
 @app.route("/webhook", methods=['GET', 'POST'])
