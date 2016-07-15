@@ -11,6 +11,9 @@ venv/bin/activate: requirements.txt
 	venv/bin/pip install -Ur requirements.txt
 	touch venv/bin/activate
 
+test: venv/bin/activate
+	. ./venv/bin/activate && cd scottadams && python ./setup.py nosetests
+
 all: venv
 
 clean:
@@ -18,4 +21,4 @@ clean:
 
 .DEFAULT_GOAL = all
 
-.PHONY: all clean
+.PHONY: venv all clean

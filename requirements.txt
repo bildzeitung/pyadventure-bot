@@ -3,5 +3,6 @@ flask
 git+https://github.com/bildzeitung/pymessenger.git
 flake8
 psycopg2
-sqlalchemy
 flask-sqlalchemy
+nose
+coverage
