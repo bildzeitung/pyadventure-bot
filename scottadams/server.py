@@ -42,16 +42,11 @@ class Server(object):
     def _save_to_db(self, player, state):
         self.log.debug('Bitflags: %s', state.bitflags)
 
-        total = 0
-        for flag in [key for key, val in state.bitflags.iteritems() if val]:
-            total += 2 << flag
-        self.log.debug('Serialised bitflags: %s', total)
-
         item_string = ','.join(str(item.location) for item in state.items)
 
         db_state = User(sender_id=player,
                         game_id=self.data.version['game_id'],
-                        bitflags=total,
+                        bitflags=state.serialise_bitflags(),
                         items=item_string,
                         current_location=state.current_location,
                         )
