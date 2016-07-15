@@ -40,8 +40,25 @@ class State(object):
 
         return new_state
 
-    def save(self):
-        pass
+    def serialise_bitflags(self):
+        total = 0
+        for flag in [key for key, val in self.bitflags.iteritems() if val]:
+            total += 2 ** flag
+
+        return total
+
+    @staticmethod
+    def deserialise_bitflags(bitflags):
+        out = defaultdict(bool)
+        count = 0
+        while (bitflags):
+            if bitflags % 2:
+                out[count] = True
+
+            count += 1
+            bitflags = bitflags >> 1
+
+        return out
 
 
 class StateFromGameData(State):
@@ -60,12 +77,4 @@ class StateFromDatabase(State):
         super(StateFromDatabase, self).__init__()
         self.current_location = data.current_location
         self.items = [Item('', int(x)) for x in data.items.split(',')]
-
-        db_bitflag = data.bitflags
-        count = 0
-        while (db_bitflag):
-            if db_bitflag % 2:
-                self.bitflags[count - 1] = True
-
-            count += 1
-            db_bitflag = db_bitflag >> 1
+        self.bitflags = self.deserialise_bitflags(data.bitflags)

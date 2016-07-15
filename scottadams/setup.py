@@ -12,8 +12,7 @@ setup(
     test_suite='nose.collector',
     install_requires=[
         'click',
-    ],
-    tests_require=[
+        'sqlalchemy',
     ],
     entry_points={
         'console_scripts': ['adventure=cli:main'],
