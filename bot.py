@@ -8,17 +8,22 @@ is sent back as a response.
 
 """
 
-from flask import Flask, request
-from pymessenger.bot import Bot
-
 from server import Server
+
+from flask import Flask, request
+from flask_sqlalchemy import SQLAlchemy
+from pymessenger.bot import Bot
 
 import os
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
 bot = Bot(os.environ['token'])
 gameserver = Server(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                 'scottadams', 'assets', os.environ['datafile']))
+                                 'scottadams', 'assets', os.environ['datafile']), db, app.logger)
 
 
 @app.route("/webhook", methods=['GET', 'POST'])

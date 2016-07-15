@@ -1,5 +1,6 @@
 # Makefile
 #
+include mk/postgres.mk
 
 VIRTUALENV=./virtualenv/virtualenv.py
 
