@@ -9,6 +9,7 @@ is sent back as a response.
 """
 
 from server import Server
+from game.model import Base
 
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
@@ -24,6 +25,11 @@ db = SQLAlchemy(app)
 bot = Bot(os.environ['token'])
 gameserver = Server(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                  'scottadams', 'assets', os.environ['datafile']), db, app.logger)
+
+
+@app.before_first_request
+def setup():
+    Base.metadata.create_all(bind=db.engine)
 
 
 @app.route("/webhook", methods=['GET', 'POST'])
