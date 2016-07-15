@@ -6,9 +6,10 @@ VIRTUALENV=./virtualenv/virtualenv.py
 
 venv: venv/bin/activate
 
-venv/bin/activate: requirements.txt
+venv/bin/activate: requirements.txt test_requirements.txt
 	test -d venv || $(VIRTUALENV) venv
 	venv/bin/pip install -Ur requirements.txt
+	venv/bin/pip install -Ur test_requirements.txt
 	touch venv/bin/activate
 
 test: venv/bin/activate
