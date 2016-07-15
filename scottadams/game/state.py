@@ -58,3 +58,14 @@ class StateFromDatabase(State):
     '''
     def __init__(self, data):
         super(StateFromDatabase, self).__init__()
+        self.current_location = data.current_location
+        self.items = [Item('', int(x)) for x in data.items.split(',')]
+
+        db_bitflag = data.bitflags
+        count = 0
+        while (db_bitflag):
+            if db_bitflag % 2:
+                self.bitflags[count - 1] = True
+
+            count += 1
+            db_bitflag = db_bitflag >> 1

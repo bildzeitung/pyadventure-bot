@@ -78,6 +78,7 @@ class Data(object):
         self.nouns = None
         self.verbs = None
         self.messages = None
+        self.version = None
 
         # load game data, in order
         self._load_header()
@@ -86,6 +87,7 @@ class Data(object):
         self._load_rooms()
         self._load_messages()
         self._load_items()
+        self._load_footer()
 
     def _load_header(self):
         headers = [int(x) for x in self.src_lines[0:12]]
@@ -170,3 +172,7 @@ class Data(object):
                 self._offset += 1
                 final_desc += '\n' + desc
             self.messages.append(final_desc[1:-1])  # strip double quotes
+
+    def _load_footer(self):
+        version, game_id, magic = [int(x) for x in self.src_lines[-3:]]
+        self.version = {'version': version, 'game_id': game_id, 'magic': magic}
