@@ -14,13 +14,13 @@ DB_NAME = development
 DB_USER = dev
 DB_PWD = test
 
-${PG_DATA}/postgresql.conf:
-	mkdir -p ${PG_DATA}
+${PG_DATA} ${PG_RUN} ${PG_LOG}:
+	mkdir -p $@
+
+${PG_DATA}/postgresql.conf: | ${PG_DATA}
 	${PG_PATH}/initdb -D ${PG_DATA} -E UNICODE
 
-${PG_SOCKET}: ${PG_DATA}/postgresql.conf
-	mkdir -p ${PG_RUN}
-	mkdir -p ${PG_LOG}
+${PG_SOCKET}: ${PG_DATA}/postgresql.conf | ${PG_RUN} ${PG_LOG}
 	${PG_PATH}/pg_ctl $(PG_PARM) start -w
 
 ${PG_DATA}/init: ${PG_SOCKET}
