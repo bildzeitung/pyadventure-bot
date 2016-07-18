@@ -61,7 +61,11 @@ class Engine(object):
                          if val != 0]) or 'none'
         msg_list.append(msg)
 
-        # TODO: add items
+        if state.colocated_items:
+            msg_list.append('')
+            msg = 'You can also see: '
+            msg += ' - '.join([item.desc for item in state.colocated_items])
+            msg_list.append(msg)
 
         state.last_message = '\n'.join(msg_list)
 

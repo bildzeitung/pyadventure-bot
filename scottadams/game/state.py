@@ -32,6 +32,12 @@ class State(object):
         self.bitflags = defaultdict(bool)
 
     @property
+    def colocated_items(self):
+        ''' Return a list of Items that are at the current player location
+        '''
+        return [item for item in self.items if item.location == self.current_location]
+
+    @property
     def last_message(self):
         return '\n'.join(self._last_message)
 
