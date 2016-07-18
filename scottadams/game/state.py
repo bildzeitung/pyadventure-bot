@@ -12,6 +12,17 @@ from data import Item
 
 
 class State(object):
+    ''' Representation of all Scott Adams game engine state
+
+        The entire game state can be recorded as:
+        - the room the player is in
+        - the value of the bitflags
+        - the locations of all of the items
+        - TODO: game counters
+        - TODO: lighting flag ??
+
+    '''
+
     def __init__(self):
         self._last_message = []
 
@@ -41,6 +52,9 @@ class State(object):
         return new_state
 
     def serialise_bitflags(self):
+        ''' The bitflags are less than 32-bit, so translate the dict into a
+            single 4-byte value
+        '''
         total = 0
         for flag in [key for key, val in self.bitflags.iteritems() if val]:
             total += 2 ** flag
@@ -49,6 +63,9 @@ class State(object):
 
     @staticmethod
     def deserialise_bitflags(bitflags):
+        ''' The dict is easier to handle in the code, so decompose the integer
+            back into a dict for the engine
+        '''
         out = defaultdict(bool)
         count = 0
         while (bitflags):
@@ -62,7 +79,7 @@ class State(object):
 
 
 class StateFromGameData(State):
-    ''' Initial game state
+    ''' Initial game state taken from the game data itself
     '''
     def __init__(self, data):
         super(StateFromGameData, self).__init__()
@@ -71,7 +88,7 @@ class StateFromGameData(State):
 
 
 class StateFromDatabase(State):
-    ''' Game state from DB
+    ''' Given a SQLAlchemy model, create the game state
     '''
     def __init__(self, data):
         super(StateFromDatabase, self).__init__()
