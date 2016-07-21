@@ -16,7 +16,7 @@ class Server(object):
         with open(datafile, 'rb') as src:
             self.data = Data(src)
 
-        self.engine = Engine(self.data)
+        self.engine = Engine(self.data, log=log)
         self.db = db
         self.log = log
 

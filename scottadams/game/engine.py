@@ -17,8 +17,13 @@ LOG = logging.getLogger('scottadams')
 class Engine(object):
     NOTFOUND = -1
 
-    def __init__(self, data):
+    def __init__(self, data, log=None):
         self.data = data
+
+        if log:
+            self.log = log
+        else:
+            self.log = LOG
 
     def start_game(self, state):
         ''' Process start of game loop & look()
@@ -66,13 +71,13 @@ class Engine(object):
         if verb in self.data.verbs:
             verb = self.data.verbs[verb]
         else:
-            LOG.debug('Could not find verb part of line: %s (%s)', line, verb)
+            self.log.debug('Could not find verb part of line: %s (%s)', line, verb)
             verb = self.NOTFOUND
 
         if noun in self.data.nouns:
             noun = self.data.nouns[noun]
         else:
-            LOG.debug('Could not find noun part of line: %s (%s)', line, noun)
+            self.log.debug('Could not find noun part of line: %s (%s)', line, noun)
             noun = self.NOTFOUND
 
         return verb, noun
@@ -122,7 +127,7 @@ class Engine(object):
     def perform_actions(self, state, verb, noun):
         ''' Main game logic
         '''
-        LOG.debug('Processing verb, noun: %s %s', verb, noun)
+        self.log.debug('Processing verb, noun: %s %s', verb, noun)
 
         # error if no direction specified with GO <x>
         if verb == 1 and noun == self.NOTFOUND:
@@ -134,11 +139,11 @@ class Engine(object):
             # TODO: deal with the lighting situation
 
             # check exits
-            LOG.debug('Room has exits: %s',
-                      self.data.rooms[state.current_location]['exits'])
+            self.log.debug('Room has exits: %s',
+                           self.data.rooms[state.current_location]['exits'])
             destination = self.data.rooms[state.current_location]['exits'][noun-1]
             if destination:
-                LOG.debug('Moving to %s', destination)
+                self.log.debug('Moving to %s', destination)
                 state.current_location = destination
                 self.look(state)
             else:
@@ -148,7 +153,7 @@ class Engine(object):
 
         # TODO: basic move
         for action in self.data.actions_by_verb(verb):
-            LOG.debug('[action] action (%s / %s | %s) by verb (%s)', action, action.verb, action.noun, verb)
+            self.log.debug('[action] action (%s / %s | %s) by verb (%s)', action, action.verb, action.noun, verb)
             # TODO: sort out random percent (always 100% right now)
             if (action.verb == 0) or (action.verb != 0 and
                                       (action.noun == noun or action.noun == 0)):
@@ -156,7 +161,7 @@ class Engine(object):
 
     def perform_line(self, state, action):
         # TODO: sort out conditionals
-        LOG.debug('[perform line]')
+        self.log.debug('[perform line]')
 
         params = []
         for condition in action.conditions:
@@ -167,11 +172,11 @@ class Engine(object):
         for act in action.actions:
             # process messages
             if act > 0 and act < 52:
-                LOG.debug('[action] [message] %s', act)
+                self.log.debug('[action] [message] %s', act)
                 state.last_message = self.data.messages[act]
                 continue
             if act > 101:
-                LOG.debug('[action] [message (>101)] %s', act)
+                self.log.debug('[action] [message (>101)] %s', act)
                 act -= 50  # adjustment
                 state.last_message = self.data.messages[act]
                 continue
