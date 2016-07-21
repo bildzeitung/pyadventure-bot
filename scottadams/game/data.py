@@ -154,12 +154,37 @@ class Data(object):
             self.items.append(Item(desc, location))
 
     def _load_nouns_and_verbs(self):
-        self.nouns = []
-        self.verbs = []
+        nouns = []
+        verbs = []
         for _ in xrange(self.headers['noun_and_verb_count'] + 1):
-            self.nouns.append(self.src_lines[self._offset])
-            self.verbs.append(self.src_lines[self._offset + 1])
+            # remove quotes
+            verbs.append(self.src_lines[self._offset][1:-1])
+            nouns.append(self.src_lines[self._offset + 1][1:-1])
             self._offset += 2
+
+        LOG.info('verb list: %s', verbs)
+        self.verbs = {}
+        offset = 0
+        for idx, verb in enumerate(verbs):
+            if verb[0] == '*':
+                verb = verb[1:]
+            else:
+                offset = idx
+
+            self.verbs[verb[:self.headers['word_length']]] = offset
+        LOG.info('verb dict: %s', self.verbs)
+
+        LOG.info('noun list: %s', nouns)
+        self.nouns = {}
+        offset = 0
+        for idx, noun in enumerate(nouns):
+            if noun[0] == '*':
+                noun = noun[1:]
+            else:
+                offset = idx
+
+            self.nouns[noun[:self.headers['word_length']]] = offset
+        LOG.info('noun dict: %s', self.nouns)
 
     def _load_messages(self):
         self.messages = []
