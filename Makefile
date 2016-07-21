@@ -17,7 +17,7 @@ test: venv/bin/activate
 
 all: venv
 
-clean:
+clean: db_clean
 	rm -fr venv
 
 .DEFAULT_GOAL = all
