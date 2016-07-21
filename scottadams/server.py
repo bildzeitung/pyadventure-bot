@@ -32,6 +32,9 @@ class Server(object):
         else:
             self.log.debug('New player; take initial state from game data')
             state = StateFromGameData(self.data)
+            new_state = self.engine.start_game(state)
+            self._save_to_db(player, new_state)
+            return new_state.last_message
 
         self.log.debug('Command: %s', command)
         new_state = self.engine.process(state, command)
