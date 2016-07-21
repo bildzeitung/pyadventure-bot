@@ -15,6 +15,8 @@ LOG = logging.getLogger('scottadams')
 
 
 class Engine(object):
+    NOTFOUND = -1
+
     def __init__(self, data):
         self.data = data
 
@@ -23,21 +25,67 @@ class Engine(object):
         '''
         new_state = state.clone()
 
-        self.perform_actions(new_state, 0, 0)  # main loop
-        new_state.last_message = ''
         self.look(new_state)
+        self.perform_actions(new_state, 0, 0)
 
         return new_state
+
+    def parse(self, line):
+        ''' Munge line into verb, noun integer pairs
+
+            Divide line into two parts; if there are more, fail
+            Take only the first 3 chars of each part, locate index in array
+        '''
+        parts = line.split(' ')
+
+        if not parts:
+            return 0, 0  # main loop
+
+        if len(parts) == 1:
+            verb = parts[0].upper()
+            noun = ''
+
+            # expand short direction names
+            remap = {'N': 'NORTH', 'S': 'SOUTH',
+                     'E': 'EAST', 'W': 'WEST',
+                     'U': 'UP', 'D': 'DOWN',
+                     'I': 'INVENTORY'}
+            if len(verb) == 1 and verb in remap:
+                noun = remap[verb]
+                verb = 'GO'
+
+        else:  # at least two parts
+            verb, noun = [x.upper() for x in parts[:2]]
+
+        # truncate to word length
+        verb = verb[:self.data.headers['word_length']]
+        noun = noun[:self.data.headers['word_length']]
+
+        if verb in self.data.verbs:
+            verb = self.data.verbs[verb]
+        else:
+            LOG.debug('Could not find verb part of line: %s (%s)', line, verb)
+            verb = self.NOTFOUND
+
+        if noun in self.data.nouns:
+            noun = self.data.nouns[noun]
+        else:
+            LOG.debug('Could not find noun part of line: %s (%s)', line, noun)
+            noun = self.NOTFOUND
+
+        return verb, noun
 
     def process(self, state, line):
         ''' Process one game loop, returning a new state
         '''
         new_state = state.clone()
 
-        self.perform_actions(new_state, 0, 0)  # main loop
+        self.perform_actions(new_state, 0, 0)  # event loop
 
-        # TODO: parse input
-        # TODO: process action
+        verb, noun = self.parse(line)
+
+        self.perform_actions(new_state, verb, noun)  # command
+
         # TODO: deal with lights
 
         return new_state
@@ -72,6 +120,8 @@ class Engine(object):
     def perform_actions(self, state, verb, noun):
         ''' Main game logic
         '''
+        LOG.debug('Processing verb, noun: %s %s', verb, noun)
+
         # TODO: some validation on verb / noun pairs
 
         # TODO: basic move
