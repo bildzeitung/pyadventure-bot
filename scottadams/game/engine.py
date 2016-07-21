@@ -48,11 +48,13 @@ class Engine(object):
             # expand short direction names
             remap = {'N': 'NORTH', 'S': 'SOUTH',
                      'E': 'EAST', 'W': 'WEST',
-                     'U': 'UP', 'D': 'DOWN',
-                     'I': 'INVENTORY'}
+                     'U': 'UP', 'D': 'DOWN'}
             if len(verb) == 1 and verb in remap:
                 noun = remap[verb]
                 verb = 'GO'
+
+            if len(verb) == 1 and verb == 'I':
+                verb = 'INVENTORY'
 
         else:  # at least two parts
             verb, noun = [x.upper() for x in parts[:2]]
@@ -122,10 +124,31 @@ class Engine(object):
         '''
         LOG.debug('Processing verb, noun: %s %s', verb, noun)
 
-        # TODO: some validation on verb / noun pairs
+        # error if no direction specified with GO <x>
+        if verb == 1 and noun == self.NOTFOUND:
+            state.last_message = 'Give me a direction too.'
+            return
+
+        # basic move
+        if verb == 1 and (0 < noun < 7):
+            # TODO: deal with the lighting situation
+
+            # check exits
+            LOG.debug('Room has exits: %s',
+                      self.data.rooms[state.current_location]['exits'])
+            destination = self.data.rooms[state.current_location]['exits'][noun-1]
+            if destination:
+                LOG.debug('Moving to %s', destination)
+                state.current_location = destination
+                self.look(state)
+            else:
+                state.last_message = "You can't go in that direction."
+
+            return
 
         # TODO: basic move
         for action in self.data.actions_by_verb(verb):
+            LOG.debug('[action] action (%s / %s | %s) by verb (%s)', action, action.verb, action.noun, verb)
             # TODO: sort out random percent (always 100% right now)
             if (action.verb == 0) or (action.verb != 0 and
                                       (action.noun == noun or action.noun == 0)):
