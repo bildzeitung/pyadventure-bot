@@ -111,7 +111,7 @@ class Data(object):
         self.rooms = []
 
         for _ in xrange(self.headers['room_count'] + 1):
-            exits = self.src_lines[self._offset:self._offset+6]
+            exits = [int(x) for x in self.src_lines[self._offset:self._offset+6]]
             desc = self.src_lines[self._offset+6]
             self._offset += 7
             final_desc = desc
