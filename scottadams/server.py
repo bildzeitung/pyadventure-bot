@@ -26,7 +26,7 @@ class Server(object):
 
         if db_player:
             self.log.debug('Found player; loading state')
-            state = StateFromDatabase(db_player[0])
+            state = StateFromDatabase(self.data, db_player[0])
             self.log.debug('Location: %s', state.current_location)
             self.log.debug('Flags: %s', state.bitflags)
         else:

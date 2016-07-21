@@ -96,8 +96,12 @@ class StateFromGameData(State):
 class StateFromDatabase(State):
     ''' Given a SQLAlchemy model, create the game state
     '''
-    def __init__(self, data):
+    def __init__(self, game, data):
         super(StateFromDatabase, self).__init__()
         self.current_location = data.current_location
-        self.items = [Item('', int(x)) for x in data.items.split(',')]
+
+        item_locations = [int(x) for x in data.items.split(',')]
+        self.items = [Item(x.desc, 0) for x in game.items]
+        for item in self.items:
+            item.location = item_locations.pop(0)
         self.bitflags = self.deserialise_bitflags(data.bitflags)
