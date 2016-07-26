@@ -41,6 +41,9 @@ class REPL(cmd.Cmd):
         self.state = self.engine.process(self.state, line)
         click.echo(self.state.last_message)
 
+    def emptyline(self):
+        pass
+
 
 @click.command()
 @click.argument('datafile', type=click.File('rb'))
