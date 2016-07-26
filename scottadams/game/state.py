@@ -30,12 +30,19 @@ class State(object):
         self.redraw = False
         self.items = None
         self.bitflags = defaultdict(bool)
+        self.is_playing = True
 
     @property
     def colocated_items(self):
         ''' Return a list of Items that are at the current player location
         '''
         return [item for item in self.items if item.location == self.current_location]
+
+    def stored_treasures(self, treasure_room):
+        ''' Return a list of Items that are in the treasure room
+        '''
+        return sum(1 for item in self.items
+                   if item.desc.startswith('*') and item.location == treasure_room)
 
     @property
     def last_message(self):
@@ -99,6 +106,7 @@ class StateFromDatabase(State):
     def __init__(self, game, data):
         super(StateFromDatabase, self).__init__()
         self.current_location = data.current_location
+        self.is_playing = data.is_playing
 
         item_locations = [int(x) for x in data.items.split(',')]
         self.items = [Item(x.desc, 0) for x in game.items]
