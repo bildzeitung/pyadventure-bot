@@ -3,7 +3,7 @@
 
 """
 
-from sqlalchemy import Column, Integer, BigInteger, String
+from sqlalchemy import Column, Integer, BigInteger, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -19,3 +19,4 @@ class User(Base):
     bitflags = Column(Integer, default=0)
     current_location = Column(Integer)
     items = Column(String(256))
+    is_playing = Column(Boolean)
