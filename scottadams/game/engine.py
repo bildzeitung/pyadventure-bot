@@ -7,9 +7,8 @@
 
 import logging
 
-from actions import actions
+from actions import actions, look
 from conditions import conditions
-from constants import EXITNAMES
 
 LOG = logging.getLogger('scottadams')
 
@@ -30,7 +29,7 @@ class Engine(object):
         '''
         new_state = state.clone()
 
-        self.look(new_state)
+        look(self.data, new_state, None)
         self.perform_actions(new_state, 0, 0)
 
         return new_state
@@ -85,6 +84,9 @@ class Engine(object):
     def process(self, state, line):
         ''' Process one game loop, returning a new state
         '''
+        if not state.is_playing:
+            return state
+
         new_state = state.clone()
 
         self.perform_actions(new_state, 0, 0)  # event loop
@@ -96,33 +98,6 @@ class Engine(object):
         # TODO: deal with lights
 
         return new_state
-
-    def look(self, state):
-        ''' Display room description
-        '''
-        msg_list = []
-
-        # TODO: sort out lighting situation
-
-        room = self.data.rooms[state.current_location]
-
-        # TODO: sort out * in text
-
-        msg_list.append("I'm in a %s" % room['desc'])
-
-        msg_list.append('')
-        msg = 'Obvious exits: '
-        msg += ', '.join([EXITNAMES[idx] for idx, val in enumerate(room['exits'])
-                         if val != 0]) or 'none'
-        msg_list.append(msg)
-
-        if state.colocated_items:
-            msg_list.append('')
-            msg = 'You can also see: '
-            msg += ' - '.join([item.desc for item in state.colocated_items])
-            msg_list.append(msg)
-
-        state.last_message = '\n'.join(msg_list)
 
     def perform_actions(self, state, verb, noun):
         ''' Main game logic
@@ -145,7 +120,7 @@ class Engine(object):
             if destination:
                 self.log.debug('Moving to %s', destination)
                 state.current_location = destination
-                self.look(state)
+                look(self.data, state, None)
             else:
                 state.last_message = "You can't go in that direction."
 
@@ -153,11 +128,12 @@ class Engine(object):
 
         # TODO: basic move
         for action in self.data.actions_by_verb(verb):
-            self.log.debug('[action] action (%s / %s | %s) by verb (%s)', action, action.verb, action.noun, verb)
+            self.log.debug('[action] action (%s / %s | %s) by verb (%s)',
+                           action, action.verb, action.noun, verb)
             # TODO: sort out random percent (always 100% right now)
             if (action.verb == 0) or (action.verb != 0 and
                                       (action.noun == noun or action.noun == 0)):
-                result = self.perform_line(state, action)
+                self.perform_line(state, action)
 
     def perform_line(self, state, action):
         # TODO: sort out conditionals
@@ -182,4 +158,4 @@ class Engine(object):
                 continue
 
             # TODO: process regular actions
-            actions[act](state, params)
+            actions[act](self.data, state, params)
