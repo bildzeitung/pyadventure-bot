@@ -3,7 +3,7 @@
 
 '''
 
-from unittest import TestCase
+from testtools import TestCase
 
 from game.state import State
 
