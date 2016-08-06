@@ -115,8 +115,8 @@ class Engine(object):
 
             # check exits
             self.log.debug('Room has exits: %s',
-                           self.data.rooms[state.current_location]['exits'])
-            destination = self.data.rooms[state.current_location]['exits'][noun-1]
+                           self.data.rooms[state.current_location].exits)
+            destination = self.data.rooms[state.current_location].exits[noun-1]
             if destination:
                 self.log.debug('Moving to %s', destination)
                 state.current_location = destination
@@ -127,13 +127,16 @@ class Engine(object):
             return
 
         # TODO: basic move
+        result = True
         for action in self.data.actions_by_verb(verb):
             self.log.debug('[action] action (%s / %s | %s) by verb (%s)',
                            action, action.verb, action.noun, verb)
             # TODO: sort out random percent (always 100% right now)
             if (action.verb == 0) or (action.verb != 0 and
                                       (action.noun == noun or action.noun == 0)):
-                self.perform_line(state, action)
+                result = self.perform_line(state, action)
+
+        self.log.debug('RESULT: %s', result)
 
     def perform_line(self, state, action):
         # TODO: sort out conditionals
@@ -142,20 +145,24 @@ class Engine(object):
         params = []
         for condition in action.conditions:
             if not conditions[condition['type']](condition['value'], state, params):
-                return 0
+                return False
 
         # TODO: perform actions if conditionals pass
+        self.log.debug('conditions ok; %s actions', len(action.actions))
         for act in action.actions:
             # process messages
             if act > 0 and act < 52:
-                self.log.debug('[action] [message] %s', act)
+                self.log.debug('[action] [message] [%s] %s', act, self.data.messages[act])
                 state.last_message = self.data.messages[act]
                 continue
             if act > 101:
-                self.log.debug('[action] [message (>101)] %s', act)
+                self.log.debug('[action] [message (>101)] [%s] %s', act, self.data.messages[act-50])
                 act -= 50  # adjustment
                 state.last_message = self.data.messages[act]
                 continue
 
             # TODO: process regular actions
             actions[act](self.data, state, params)
+
+        self.log.debug('[completed line]')
+        return True
