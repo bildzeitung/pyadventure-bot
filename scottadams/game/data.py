@@ -48,6 +48,11 @@ class Item(object):
     def __init__(self, desc, location):
         self.desc = desc
         self.location = location
+        self.autoget = False
+
+        if '/' in self.desc:
+            self.autoget = True
+            self.desc = self.desc.split('/')[0]
 
     def __str__(self):
         return ' '.join([self.desc, str(self.location)])
