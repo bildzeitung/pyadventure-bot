@@ -53,6 +53,19 @@ class Item(object):
         return ' '.join([self.desc, str(self.location)])
 
 
+class Room(object):
+    ''' Internal representation of a room
+    '''
+    def __init__(self, desc, exits):
+        self.exits = exits
+        self.noprefix = False
+        self.desc = desc
+
+        if desc.startswith('*'):
+            self.noprefix = True
+            self.desc = self.desc[1:]
+
+
 class Data(object):
     ''' Internal representation of game data
 
@@ -119,7 +132,7 @@ class Data(object):
                 desc = self.src_lines[self._offset]
                 self._offset += 1
                 final_desc += ' ' + desc
-            self.rooms.append({'exits': exits, 'desc': final_desc[1:-1]})
+            self.rooms.append(Room(final_desc[1:-1], exits))
 
     def _load_actions(self):
         self.actions = []

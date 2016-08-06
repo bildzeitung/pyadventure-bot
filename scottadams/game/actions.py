@@ -61,13 +61,15 @@ def look(data, state, params):
 
     room = data.rooms[state.current_location]
 
-    # TODO: sort out * in text
+    prefix = "I'm in a "
+    if room.noprefix:
+        prefix = ''
 
-    msg_list.append("I'm in a %s" % room['desc'])
+    msg_list.append("%s%s" % (prefix, room.desc))
 
     msg_list.append('')
     msg = 'Obvious exits: '
-    msg += ', '.join([EXITNAMES[idx] for idx, val in enumerate(room['exits'])
+    msg += ', '.join([EXITNAMES[idx] for idx, val in enumerate(room.exits)
                      if val != 0]) or 'none'
     msg_list.append(msg)
 
